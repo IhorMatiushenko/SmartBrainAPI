@@ -1,5 +1,7 @@
 const express = require('express');
 const bodyParser = require('body-parser');
+const bcrypt = require('bcrypt-nodejs');
+const cors = require('cors');
 
 /**
   /login --> POST = success/fail
@@ -12,6 +14,7 @@ const port = process.env.PORT || 3002;
 const app = express();
 
 app.use(bodyParser.json());
+app.use(cors());
 
 /**
  * mock database
@@ -51,7 +54,12 @@ app.get('/', (req, res) => {
 app.post('/login', (req, res) => {
   if (req.body.email === database.users[0].email &&
     req.body.password === database.users[0].password) {
-    res.json('success');
+
+    const response = {
+      status: 'success',
+      user: database.users[0],
+    };
+    res.json(response);
   } else {
     res.status(400).json('error login in');
   }
@@ -92,7 +100,7 @@ app.get('/profile/:id', (req, res) => {
 /**
  * images number
  */
-app.post('/image', (req, res) => {
+app.put('/image', (req, res) => {
   const { id } = req.body;
   const user = database.users.filter((user) => user.id === id);
 
